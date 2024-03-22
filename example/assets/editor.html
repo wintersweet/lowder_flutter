@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="editor.js"></script>
+  <title>Lowder Editor</title>
+  <meta name="description" content="Lowder Editor" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="https://www.baidu.com" />
+  <link rel="stylesheet" type="text/css" href="editor.css" />
+  <script>
+    window.onload = () => Editor.init();
+  </script>
+</head>
+<body>
+  <column class="content">
+    <row class="toolbar">
+      <span class="toolbar-item material-symbols-outlined" onclick="Editor.showSettings()" title="Solution settings">settings</span>
+      <span class="toolbar-item material-symbols-outlined" onclick="Editor.saveSolution()" title="Save Solution">save</span>
+      <div class="toolbar-separator">&nbsp;</div>
+      <span class="toolbar-item material-symbols-outlined" onclick="Editor.editEnvironmentVariables()" title="Environment Variables">assignment</span>
+      <select id="environmentSelect" title="Select Environment"></select>
+      <div class="toolbar-separator">&nbsp;</div>
+      <span class="toolbar-item material-symbols-outlined" onclick="Editor.editStringResources()" title="Language Resources">translate</span>
+      <select id="languageSelect" title="Select Language"></select>
+      <div class="toolbar-separator">&nbsp;</div>
+      <span class="toolbar-item material-symbols-outlined" onclick="Editor.importSwagger()" title="Import Swagger">download</span>
+      <span class="toolbar-item material-symbols-outlined" onclick="Editor.showHelp()" title="Helpful Links">help</span>
+      <div class="toolbar-filler">
+        <label id="toolbar-solution-name" class="toolbar-solution-name"></label>
+      </div>
+    </row>
+    <row class="panels">
+      <row id="explorer-tabs" class="explorer-tabs collapsible-tabs">
+        <column id="solution-tabs-buttons" class="collapsible-tabs-buttons">
+          <span class="collapsible-tabs-button collapsible-tabs-button-selected material-symbols-outlined" title="Screens" onclick="selectCollapsibleTab(event, 0)">phone_iphone</span>
+          <span class="collapsible-tabs-button material-symbols-outlined" title="Templates" onclick="selectCollapsibleTab(event, 1)">style</span>
+          <span class="collapsible-tabs-button material-symbols-outlined" title="Components" onclick="selectCollapsibleTab(event, 2)">layers</span>
+          <span class="collapsible-tabs-button material-symbols-outlined" title="Requests" onclick="selectCollapsibleTab(event, 3)">cloud</span>
+          <column class="collapsible-tabs-bottom-buttons">
+            <span class="collapsible-tabs-button material-symbols-outlined" title="Widget catalog" onclick="selectCollapsibleTab(event, 4, true)">widgets</span>
+            <span id="solution-tabs-toggler" class="collapsible-tabs-toggler material-symbols-outlined" title="Toggle" onclick="toggleCollapsibleTabs(event)"></span>
+          </column>
+        </column>
+        <div id="explorer-tabs-panels" class="collapsible-tabs-panels">
+          <column id="solution-panel" class="collapsible-tabs-panel solution-panel"></column>
+          <column id="template-panel" class="collapsible-tabs-panel solution-panel hidden"></column>
+          <column id="component-panel" class="collapsible-tabs-panel solution-panel hidden"></column>
+          <column id="type-panel" class="collapsible-tabs-panel solution-panel hidden"></column>
+          <column id="widget-panel" class="collapsible-tabs-panel solution-panel hidden"></column>
+        </div>
+      </row>
+      <column id="designer-panel" class="designer-panel">
+        <row id="designer-tab-items" class="tab-item-holder">
+          <row class="tab-item tab-item-selected" onclick="tabClick('designer-tab-items', 'designer-tab-panels', 0)">
+            <icon class="material-symbols-outlined">phone_iphone</icon>
+            <span>Screen</span>
+          </row>
+          <row class="tab-item" onclick="tabClick('designer-tab-items', 'designer-tab-panels', 1)">
+            <icon class="material-symbols-outlined">account_tree</icon>
+            <span>Actions</span>
+          </row>
+          <row class="tab-item" onclick="tabClick('designer-tab-items', 'designer-tab-panels', 2)">
+            <icon class="material-symbols-outlined">directions</icon>
+            <span>Navigation</span>
+          </row>
+          <div id="flutter-panel-toolbar" class="flutter-panel-toolbar">
+            <span class="toolbar-item material-symbols-outlined" title="Rebuild Flutter client" onclick="Editor.screenPanel.frameReload()">construction</span>
+            <span class="toolbar-item material-symbols-outlined" onclick="Editor.screenPanel.frameFull()">computer</span>
+            <span class="toolbar-item material-symbols-outlined" onclick="Editor.screenPanel.framePhone()">phone_iphone</span>
+            <span class="toolbar-item material-symbols-outlined" onclick="Editor.screenPanel.frameTablet()">tablet</span>
+            <input type="number" placeholder="width" onchange="Editor.screenPanel.frameWidth(this.value)"/>
+            <input type="number" placeholder="height" onchange="Editor.screenPanel.frameHeight(this.value)"/>
+            <!-- <select onchange="Editor.setEditMode(this.value)">
+              <option value="false">Test Mode</option>
+              <option value="true">Edit Mode</option>
+            </select> -->
+          </div>
+        </row>
+        <div class="screen-holder">
+          <div id="screen-panel" class="screen-panel"></div>
+          <div id="designer-tab-panels" class="tab-panel-holder">
+            <div id="flutter-panel" class="flutter-panel">
+              <iframe id="flutter-panel-frame" width="100%" height="100%" src="/index.html"></iframe>
+            </div>
+            <div id="flow-panel" class="flow-panel tab-panel-invisible">
+              <div id="flow-panel-grid-holder" class="flow-panel-grid-holder"></div>
+            </div>
+            <div id="navigation-panel" class="navigation-panel tab-panel-invisible">
+              <div id="navigation-panel-grid" class="navigation-panel-grid"></div>
+            </div>
+          </div>
+        </div>
+      </column>
+      <row id="config-tabs" class="config-tabs collapsible-tabs">
+        <div id="config-tabs-panels" class="collapsible-tabs-panels">
+          <div id="property-panel" class="collapsible-tabs-panel property-panel"></div>
+          <column id="test-panel" class="collapsible-tabs-panel test-panel hidden"></column>
+          <div id="json-panel" class="collapsible-tabs-panel json-panel hidden"></div>
+        </div>
+        <column id="config-tabs-buttons" class="collapsible-tabs-buttons">
+          <span class="collapsible-tabs-button collapsible-tabs-button-selected material-symbols-outlined" title="Properties" onclick="selectCollapsibleTab(event, 0)">list</span>
+          <span class="collapsible-tabs-button material-symbols-outlined" title="Mock State" onclick="selectCollapsibleTab(event, 1)">bug_report</span>
+          <span class="collapsible-tabs-button material-symbols-outlined" title="Json" onclick="selectCollapsibleTab(event, 2)">data_object</span>
+          <column class="collapsible-tabs-bottom-buttons">
+            <span id="config-tabs-toggler" class="collapsible-tabs-toggler material-symbols-outlined" title="Toggle" onclick="toggleCollapsibleTabs(event)"></span>
+          </column>
+        </column>
+      </row>
+    </row>
+    <column id="footer-panel" class="footer-panel footer-panel-collapsed collapsible-tabs">
+      <row class="footer-tabs-buttons collapsible-tabs-buttons">
+        <row class="collapsible-tabs-button collapsible-tabs-button-selected" title="Console" onclick="selectCollapsibleTab(event, 0)">
+          <icon class="material-symbols-outlined">breaking_news</icon>
+          <span>Console</span>
+        </row>
+        <row id="search-panel-tab" class="collapsible-tabs-button" title="Search" onclick="selectCollapsibleTab(event, 1)">
+          <icon class="material-symbols-outlined">search</icon>
+          <span>Search</span>
+        </row>
+        <row class="footer-panel-toolbar">
+          <icon class='footer-panel-toolbar-expand material-symbols-outlined' onclick="FooterPanel.show()">push_pin</icon>
+          <icon class='footer-panel-toolbar-collapse material-symbols-outlined' onclick="FooterPanel.hide()">expand_more</icon>
+        </row>
+      </row>
+      <column class="footer-tabs-panels collapsible-tabs-panels">
+        <column id="console-panel" class="console-panel">
+          <row id="console-panel-toolbar" class="console-panel-toolbar"></row>
+          <column id="console-panel-logs" class="console-panel-logs"></column>
+        </column>
+        <column id="search-panel" class="search-panel hidden">
+          <row id="search-panel-toolbar" class="search-panel-toolbar"></row>
+          <column id="search-panel-results" class="search-panel-results"></column>
+        </column>
+      </column>
+      <span id="footer-panel-status" class="footer-panel-status"></span>
+    </column>
+  </column>
+  <column id="snackbar"/>
+  <datalist id="env-datalist"></datalist>
+  <datalist id="global-datalist"></datalist>
+  <datalist id="state-datalist"></datalist>
+</body>
+</html>

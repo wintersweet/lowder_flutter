@@ -5,9 +5,6 @@ import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart' as shelf_router;
 import 'package:shelf_static/shelf_static.dart' as shelf_static;
 import 'editor.dart';
-import 'testhtml/editor.html';
-import 'testhtml/editor.js';
-import 'testhtml/editor.css';
 
 Future main(List<String> args) async {
   int port = 8787;
@@ -50,43 +47,39 @@ class HttpServer {
     final cascade = Cascade()
         .add(shelf_static.createStaticHandler(flutterWebPath,
             serveFilesOutsidePath: true, defaultDocument: 'index.html'))
-        .add(
-          (shelf_router.Router()
-                ..get(
-                    '/editor.html',
-                    (r) => Response.ok(editorHtml,
-                        headers: _getDefaultHeaders()
-                          ..addAll(
-                              {'content-type': 'text/html; charset=utf-8'})))
-                ..get(
-                    '/editor.css',
-                    (r) => Response.ok(editorCss,
-                        headers: _getDefaultHeaders()
-                          ..addAll(
-                              {'content-type': 'text/css; charset=utf-8'})))
-                ..get(
-                    '/editor.js',
-                    (r) => Response.ok(editorJs,
-                        headers: _getDefaultHeaders()
-                          ..addAll({
-                            'content-type': 'text/javascript; charset=utf-8'
-                          })))
-                // ..get('/schema', _getSchema)
-                ..get('/editor', _editorPoll)
-                ..post('/editor', _editorPost)
-                ..get('/client', _clientPoll)
-                ..post('/client', _clientPost)
-                ..get(
-                    '/environment',
-                    (req) =>
-                        Response.ok(jsonEncode(Platform.environment), headers: {
-                          'content-type': 'application/json; charset=utf-8',
-                        }))
-                ..post('/loadSolutions', (req) => _loadSolutions(req))
-                ..post('/saveSolutions', (req) => _saveSolutions(req))
-                ..get('/rebuild', (req) => _rebuild(req, flutterPath, port)))
-              .call,
-        );
+        .add((shelf_router.Router()
+              ..get(
+                  '/editor.html',
+                  (r) => Response.ok(editorHtml,
+                      headers: _getDefaultHeaders()
+                        ..addAll({'content-type': 'text/html; charset=utf-8'})))
+              ..get(
+                  '/editor.css',
+                  (r) => Response.ok(editorCss,
+                      headers: _getDefaultHeaders()
+                        ..addAll({'content-type': 'text/css; charset=utf-8'})))
+              ..get(
+                  '/editor.js',
+                  (r) => Response.ok(editorJs,
+                      headers: _getDefaultHeaders()
+                        ..addAll({
+                          'content-type': 'text/javascript; charset=utf-8'
+                        })))
+              // ..get('/schema', _getSchema)
+              ..get('/editor', _editorPoll)
+              ..post('/editor', _editorPost)
+              ..get('/client', _clientPoll)
+              ..post('/client', _clientPost)
+              ..get(
+                  '/environment',
+                  (req) =>
+                      Response.ok(jsonEncode(Platform.environment), headers: {
+                        'content-type': 'application/json; charset=utf-8',
+                      }))
+              ..post('/loadSolutions', (req) => _loadSolutions(req))
+              ..post('/saveSolutions', (req) => _saveSolutions(req))
+              ..get('/rebuild', (req) => _rebuild(req, flutterPath, port)))
+            .call);
 
     final server = await shelf_io.serve(
       cascade.handler,
